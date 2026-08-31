@@ -165,6 +165,7 @@ GameObject:
   - component: {fileID: 1225872966892507323}
   - component: {fileID: 1764553033123085545}
   - component: {fileID: 9101566343891562788}
+  - component: {fileID: 1548952611583355250}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -252,5 +253,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.PlayerMovement
   moveSpeed: 5
+  crouchSpeedMultiplier: 0.5
+  sprintSpeedMultiplier: 1.75
   turnSpeed: 720
   movementReference: {fileID: 0}
+--- !u!114 &1548952611583355250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8568390297764767386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53a7cc8442e64a94a5461de4db8eb2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.FootstepEventEmitter
+  footHorizontalOffset: 0.25
+  standingStepThreshold: 2
+  crouchStepThreshold: 1.5
+  sprintStepThreshold: 2.5

@@ -112,3 +112,21 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Operating-system metadata (macOS and Windows)
+.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code
+# Keep shareable workspace configuration such as settings.json, extensions.json,
+# launch.json, and tasks.json under .vscode/.
+.vscode/*.log
+.vscode/*.code-workspace
+
+# Local Codex agent skills and their machine-specific lockfile
+/.agents/
+/skills-lock.json

@@ -12,7 +12,6 @@ namespace Echo.Gameplay
         [Min(0f)] public float VisualThickness = 0.25f;
         [Min(0f)] public float TraceDuration = 0.5f;
         [Min(0f)] public float VisualIntensity = 1f;
-        public AnimationCurve VisualFalloff = AnimationCurve.Linear(0f, 1f, 1f, 0f);
 
         [Header("Detection")]
         [Min(0f)] public float HearingIntensity = 1f;

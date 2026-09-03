@@ -14,6 +14,8 @@ namespace Echo.Gameplay
         private Renderer targetRenderer;
         private MaterialPropertyBlock properties;
 
+        public Color ResponseColor => responseColor;
+
         private void Awake()
         {
             targetRenderer = GetComponent<Renderer>();

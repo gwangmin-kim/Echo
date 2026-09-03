@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &803578729846515017
 Transform:
   m_ObjectHideFlags: 0
@@ -169,6 +169,7 @@ GameObject:
   - component: {fileID: 810693976897613389}
   - component: {fileID: 8705838854566583185}
   - component: {fileID: 2791752513772939192}
+  - component: {fileID: 4501738962464186388}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -255,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea9d7e7e97024db885c773b25185ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.PlayerMovement
-  moveSpeed: 3
+  moveSpeed: 2.4
   crouchSpeedMultiplier: 0.5
   sprintSpeedMultiplier: 1.75
   turnSpeed: 720
@@ -273,9 +274,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.FootstepEventEmitter
   footHorizontalOffset: 0.25
-  standingStepThreshold: 1.8
-  crouchStepThreshold: 0.8
-  sprintStepThreshold: 2.5
+  standingStepThreshold: 1.4
+  crouchStepThreshold: 0.6
+  sprintStepThreshold: 1.8
 --- !u!114 &810693976897613389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,3 +322,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.PlayerClapEmitter
   profile: {fileID: 11400000, guid: 4d524c54db36a402bbd1f5da86b3eb52, type: 2}
   originYOffset: 1.2
+--- !u!114 &4501738962464186388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8568390297764767386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 011deb31449564f3caa02810a086efd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.FootprintVisualEmitter
+  footprintRenderer: {fileID: 0}

@@ -44,12 +44,12 @@ namespace Echo.Gameplay
                 footstepEmitter.FootstepOccurred -= OnFootstepOccurred;
         }
 
-        private void OnFootstepOccurred(Vector3 position, FootstepMovementState movementState)
+        private void OnFootstepOccurred(FootstepEventData data)
         {
             if (soundWaveSystem == null)
                 soundWaveSystem = SoundWaveSystem.Instance;
 
-            SoundWaveProfile profile = GetProfile(movementState);
+            SoundWaveProfile profile = GetProfile(data.MovementState);
             if (soundWaveSystem == null || profile == null)
                 return;
 
@@ -59,7 +59,7 @@ namespace Echo.Gameplay
             float pitch = profile.AudioPitch * pitchVariation;
 
             SoundWaveEmission emission = new(
-                position,
+                data.Position,
                 gameObject,
                 profile.MaxRadius,
                 profile.VisualThickness,

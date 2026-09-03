@@ -21,7 +21,7 @@ namespace Echo.Gameplay
         [SerializeField] private float crouchStepThreshold = 1.5f;
         [SerializeField] private float sprintStepThreshold = 2.5f;
 
-        public event Action<Vector3, FootstepMovementState> FootstepOccurred;
+        public event Action<FootstepEventData> FootstepOccurred;
 
         private Rigidbody body;
         private GlobalInputManager input;
@@ -88,12 +88,20 @@ namespace Echo.Gameplay
         private void EmitFootstep()
         {
             float side = nextFootIsLeft ? -1f : 1f;
-            Vector3 worldPosition = transform.TransformPoint(new Vector3(side * footHorizontalOffset, 0f, 0f));
+            Vector3 rawPosition = transform.TransformPoint(new Vector3(side * footHorizontalOffset, 0f, 0f));
             nextFootIsLeft = !nextFootIsLeft;
 
             FootstepMovementState movementState = GetCurrentMovementState();
-            Debug.Log($"Footstep event ({movementState}) at {worldPosition}", this);
-            FootstepOccurred?.Invoke(worldPosition, movementState);
+            Vector3 eventPosition = ResolveEventPosition(rawPosition);
+            FootstepEventData data = new(eventPosition, transform.forward, side < 0f, movementState, gameObject);
+            Debug.Log($"Footstep event ({movementState}) at {eventPosition}", this);
+            FootstepOccurred?.Invoke(data);
+        }
+
+        private Vector3 ResolveEventPosition(Vector3 rawPosition)
+        {
+            // Keep the sound origin and visual footprint aligned. Surface correction belongs here.
+            return rawPosition;
         }
 
         private FootstepMovementState GetCurrentMovementState()

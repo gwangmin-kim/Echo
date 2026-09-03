@@ -56,7 +56,7 @@ MonoBehaviour:
     TraceDuration: 0.15
     VisualIntensity: 0.65
     HearingIntensity: 0.6
-    AudioVolume: 0.55
+    AudioVolume: 0.5
     AudioPitch: 1
     AudioMaxDistance: 20
   ChargedMaximum:

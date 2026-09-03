@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0de93029644f49478f05768ee3b1e80, type: 3}
-  m_Name: Footstep_Concrete
+  m_Name: Footstep_Default_Crouch
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.SoundWaveProfile
-  MaxRadius: 12
+  MaxRadius: 5
   VisualThickness: 0.1
   TraceDuration: 0.1
-  VisualIntensity: 1
-  HearingIntensity: 1
+  VisualIntensity: 0.5
+  HearingIntensity: 0.35
   HearingFalloff:
     serializedVersion: 2
     m_Curve:
@@ -42,6 +42,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   AudioClip: {fileID: 8300000, guid: f7a215113ef6f47169d92e7313820f56, type: 3}
-  AudioVolume: 1
-  AudioPitch: 1
-  AudioMaxDistance: 20
+  AudioVolume: 0.25
+  AudioPitch: 0.8
+  AudioMaxDistance: 8

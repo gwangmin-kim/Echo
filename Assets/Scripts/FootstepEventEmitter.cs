@@ -3,6 +3,13 @@ using UnityEngine;
 
 namespace Echo.Gameplay
 {
+    public enum FootstepMovementState
+    {
+        Walk,
+        Sprint,
+        Crouch
+    }
+
     [RequireComponent(typeof(Rigidbody))]
     public sealed class FootstepEventEmitter : MonoBehaviour
     {
@@ -14,7 +21,7 @@ namespace Echo.Gameplay
         [SerializeField] private float crouchStepThreshold = 1.5f;
         [SerializeField] private float sprintStepThreshold = 2.5f;
 
-        public event Action<Vector3> FootstepOccurred;
+        public event Action<Vector3, FootstepMovementState> FootstepOccurred;
 
         private Rigidbody body;
         private GlobalInputManager input;
@@ -84,8 +91,22 @@ namespace Echo.Gameplay
             Vector3 worldPosition = transform.TransformPoint(new Vector3(side * footHorizontalOffset, 0f, 0f));
             nextFootIsLeft = !nextFootIsLeft;
 
-            Debug.Log($"Footstep event at {worldPosition}", this);
-            FootstepOccurred?.Invoke(worldPosition);
+            FootstepMovementState movementState = GetCurrentMovementState();
+            Debug.Log($"Footstep event ({movementState}) at {worldPosition}", this);
+            FootstepOccurred?.Invoke(worldPosition, movementState);
+        }
+
+        private FootstepMovementState GetCurrentMovementState()
+        {
+            if (input == null)
+                return FootstepMovementState.Walk;
+
+            return input.ActiveMovementModifier switch
+            {
+                MovementModifier.Sprint => FootstepMovementState.Sprint,
+                MovementModifier.Crouch => FootstepMovementState.Crouch,
+                _ => FootstepMovementState.Walk
+            };
         }
 
         private void OnDrawGizmos()

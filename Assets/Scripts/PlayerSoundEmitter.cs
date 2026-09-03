@@ -1,11 +1,22 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Echo.Gameplay
 {
     [RequireComponent(typeof(FootstepEventEmitter))]
     public sealed class PlayerSoundEmitter : MonoBehaviour
     {
-        [SerializeField] private SoundWaveProfile footstepProfile;
+        [Header("Footstep Sound Profiles")]
+        [FormerlySerializedAs("footstepProfile")]
+        [SerializeField] private SoundWaveProfile walkingFootstepProfile;
+        [SerializeField] private SoundWaveProfile sprintingFootstepProfile;
+        [SerializeField] private SoundWaveProfile crouchingFootstepProfile;
+
+        [Header("Per-step Variation")]
+        [Range(0f, 1f)]
+        [SerializeField] private float volumeVariationRatio = 0.1f;
+        [Range(0f, 1f)]
+        [SerializeField] private float pitchVariationRatio = 0.1f;
 
         private FootstepEventEmitter footstepEmitter;
         private SoundWaveSystem soundWaveSystem;
@@ -33,29 +44,53 @@ namespace Echo.Gameplay
                 footstepEmitter.FootstepOccurred -= OnFootstepOccurred;
         }
 
-        private void OnFootstepOccurred(Vector3 position)
+        private void OnFootstepOccurred(Vector3 position, FootstepMovementState movementState)
         {
             if (soundWaveSystem == null)
                 soundWaveSystem = SoundWaveSystem.Instance;
 
-            if (soundWaveSystem == null || footstepProfile == null)
+            SoundWaveProfile profile = GetProfile(movementState);
+            if (soundWaveSystem == null || profile == null)
                 return;
+
+            float volumeVariation = GetRandomMultiplier(volumeVariationRatio);
+            float pitchVariation = GetRandomMultiplier(pitchVariationRatio);
+            float volume = Mathf.Clamp01(profile.AudioVolume * volumeVariation);
+            float pitch = profile.AudioPitch * pitchVariation;
 
             SoundWaveEmission emission = new(
                 position,
                 gameObject,
-                footstepProfile.MaxRadius,
-                footstepProfile.VisualThickness,
-                footstepProfile.TraceDuration,
-                footstepProfile.VisualIntensity,
-                footstepProfile.HearingIntensity,
-                footstepProfile.HearingFalloff,
-                footstepProfile.AudioClip,
-                footstepProfile.AudioVolume,
-                footstepProfile.AudioPitch,
-                footstepProfile.AudioMaxDistance);
+                profile.MaxRadius,
+                profile.VisualThickness,
+                profile.TraceDuration,
+                profile.VisualIntensity,
+                profile.HearingIntensity,
+                profile.HearingFalloff,
+                profile.AudioClip,
+                volume,
+                pitch,
+                profile.AudioMaxDistance);
 
             soundWaveSystem.Emit(in emission);
+        }
+
+        private static float GetRandomMultiplier(float variationRatio)
+        {
+            float ratio = Mathf.Clamp01(variationRatio);
+            return Random.Range(1f - ratio, 1f + ratio);
+        }
+
+        private SoundWaveProfile GetProfile(FootstepMovementState movementState)
+        {
+            return movementState switch
+            {
+                FootstepMovementState.Sprint => sprintingFootstepProfile != null
+                    ? sprintingFootstepProfile : walkingFootstepProfile,
+                FootstepMovementState.Crouch => crouchingFootstepProfile != null
+                    ? crouchingFootstepProfile : walkingFootstepProfile,
+                _ => walkingFootstepProfile
+            };
         }
     }
 }

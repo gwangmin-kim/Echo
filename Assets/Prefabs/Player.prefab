@@ -274,7 +274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.FootstepEventEmitter
   footHorizontalOffset: 0.25
   standingStepThreshold: 1.8
-  crouchStepThreshold: 1
+  crouchStepThreshold: 0.8
   sprintStepThreshold: 2.5
 --- !u!114 &810693976897613389
 MonoBehaviour:
@@ -288,7 +288,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e25e9bf6fb12f46aa9133fa991199c56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.PlayerSoundEmitter
-  footstepProfile: {fileID: 11400000, guid: b2198cc59126b4a5a9f397963887ae9a, type: 2}
+  walkingFootstepProfile: {fileID: 11400000, guid: b2198cc59126b4a5a9f397963887ae9a, type: 2}
+  sprintingFootstepProfile: {fileID: 11400000, guid: b566c97f7000a4250aca35cd78b297b0, type: 2}
+  crouchingFootstepProfile: {fileID: 11400000, guid: ad6ddda7ed26f44dca09027b6f96f334, type: 2}
+  volumeVariationRatio: 0.1
+  pitchVariationRatio: 0.1
 --- !u!114 &8705838854566583185
 MonoBehaviour:
   m_ObjectHideFlags: 0

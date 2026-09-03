@@ -25,6 +25,13 @@ namespace Echo.Gameplay
             input = GlobalInputManager.Instance;
             if (input == null)
                 Debug.LogError("PlayerMovement requires a GlobalInputManager in the scene.");
+
+            if (movementReference == null)
+            {
+                movementReference = Camera.main.transform;
+                if (movementReference == null)
+                    Debug.LogError("Playermovement requires a Camera in the scene as a movementReference");
+            }
         }
 
         private void FixedUpdate()
@@ -32,7 +39,9 @@ namespace Echo.Gameplay
             if (input == null)
                 return;
 
-            Transform reference = movementReference != null ? movementReference : Camera.main?.transform;
+            body.angularVelocity = Vector3.zero;
+
+            Transform reference = movementReference != null ? movementReference : Camera.main.transform;
             Vector3 forward = reference != null ? reference.forward : Vector3.forward;
             Vector3 right = reference != null ? reference.right : Vector3.right;
             forward.y = 0f;

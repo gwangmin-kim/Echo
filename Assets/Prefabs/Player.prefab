@@ -168,6 +168,7 @@ GameObject:
   - component: {fileID: 1548952611583355250}
   - component: {fileID: 810693976897613389}
   - component: {fileID: 8705838854566583185}
+  - component: {fileID: 2791752513772939192}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -302,3 +303,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.SoundWaveListener
   sensitivity: 1
   minimumIntensity: 0
+--- !u!114 &2791752513772939192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8568390297764767386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d82bfa2f1b1c403f8266f5fa150b45f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.PlayerClapEmitter
+  profile: {fileID: 11400000, guid: 4d524c54db36a402bbd1f5da86b3eb52, type: 2}
+  originYOffset: 1.2

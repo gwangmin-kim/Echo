@@ -6,24 +6,23 @@ namespace Echo.Gameplay
     {
         public void Play(in SoundWave wave)
         {
-            SoundWaveProfile profile = wave.Profile;
-            if (profile == null || profile.AudioClip == null)
+            if (wave.AudioClip == null)
                 return;
 
             GameObject audioObject = new($"SoundWaveAudio_{wave.Id}");
             audioObject.transform.position = wave.Origin;
 
             AudioSource source = audioObject.AddComponent<AudioSource>();
-            source.clip = profile.AudioClip;
-            source.volume = profile.AudioVolume;
-            source.pitch = profile.AudioPitch;
+            source.clip = wave.AudioClip;
+            source.volume = wave.AudioVolume;
+            source.pitch = wave.AudioPitch;
             source.spatialBlend = 1f;
             source.rolloffMode = AudioRolloffMode.Logarithmic;
             source.minDistance = 1f;
-            source.maxDistance = profile.AudioMaxDistance;
+            source.maxDistance = wave.AudioMaxDistance;
             source.Play();
 
-            Object.Destroy(audioObject, profile.AudioClip.length / Mathf.Max(0.01f, Mathf.Abs(profile.AudioPitch)) + 0.1f);
+            Object.Destroy(audioObject, wave.AudioClip.length / Mathf.Max(0.01f, Mathf.Abs(wave.AudioPitch)) + 0.1f);
         }
     }
 }

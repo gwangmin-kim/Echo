@@ -41,7 +41,21 @@ namespace Echo.Gameplay
             if (soundWaveSystem == null || footstepProfile == null)
                 return;
 
-            soundWaveSystem.Emit(position, footstepProfile, gameObject);
+            SoundWaveEmission emission = new(
+                position,
+                gameObject,
+                footstepProfile.MaxRadius,
+                footstepProfile.VisualThickness,
+                footstepProfile.TraceDuration,
+                footstepProfile.VisualIntensity,
+                footstepProfile.HearingIntensity,
+                footstepProfile.HearingFalloff,
+                footstepProfile.AudioClip,
+                footstepProfile.AudioVolume,
+                footstepProfile.AudioPitch,
+                footstepProfile.AudioMaxDistance);
+
+            soundWaveSystem.Emit(in emission);
         }
     }
 }

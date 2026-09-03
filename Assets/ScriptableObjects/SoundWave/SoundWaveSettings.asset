@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df2dcc1d52caf4dfdb7c32a3e0dff65d, type: 3}
   m_Name: SoundWaveSettings
   m_EditorClassIdentifier: Assembly-CSharp::Echo.Gameplay.SoundWaveSettings
-  PropagationSpeed: 25
+  PropagationSpeed: 15
   MaxVisibleWaves: 16
   MaxLogicalWaves: 64

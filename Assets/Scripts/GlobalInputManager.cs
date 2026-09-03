@@ -16,6 +16,8 @@ namespace Echo.Gameplay
     {
         public static GlobalInputManager Instance { get; private set; }
 
+        public static event Action<float> ClapReleased;
+
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
         public MovementModifier ActiveMovementModifier { get; private set; }
@@ -29,6 +31,9 @@ namespace Echo.Gameplay
         private InputAction lookAction;
         private InputAction crouchAction;
         private InputAction sprintAction;
+        private InputAction clapAction;
+        private double clapStartedTime;
+        private bool clapHeld;
 
         private void Awake()
         {
@@ -56,6 +61,7 @@ namespace Echo.Gameplay
             lookAction = gameplayMap.FindAction("Look", true);
             crouchAction = gameplayMap.FindAction("Crouch", true);
             sprintAction = gameplayMap.FindAction("Sprint", true);
+            clapAction = gameplayMap.FindAction("Clap", true);
 
             moveAction.performed += OnMove;
             moveAction.canceled += OnMove;
@@ -65,6 +71,8 @@ namespace Echo.Gameplay
             crouchAction.canceled += OnCrouch;
             sprintAction.performed += OnSprint;
             sprintAction.canceled += OnSprint;
+            clapAction.started += OnClapStarted;
+            clapAction.canceled += OnClapCanceled;
             gameplayMap.Enable();
         }
 
@@ -94,6 +102,15 @@ namespace Echo.Gameplay
                 sprintAction.canceled -= OnSprint;
             }
 
+            if (clapAction != null)
+            {
+                clapAction.started -= OnClapStarted;
+                clapAction.canceled -= OnClapCanceled;
+            }
+
+            clapHeld = false;
+            clapStartedTime = 0;
+
             gameplayMap?.Disable();
         }
 
@@ -117,6 +134,22 @@ namespace Echo.Gameplay
         private void OnSprint(InputAction.CallbackContext context)
         {
             UpdateMovementModifier(MovementModifier.Sprint, context.ReadValueAsButton());
+        }
+
+        private void OnClapStarted(InputAction.CallbackContext context)
+        {
+            clapHeld = true;
+            clapStartedTime = context.time;
+        }
+
+        private void OnClapCanceled(InputAction.CallbackContext context)
+        {
+            if (!clapHeld)
+                return;
+
+            clapHeld = false;
+            float heldTime = Mathf.Max(0f, (float)(context.time - clapStartedTime));
+            ClapReleased?.Invoke(heldTime);
         }
 
         private void UpdateMovementModifier(MovementModifier modifier, bool pressed)

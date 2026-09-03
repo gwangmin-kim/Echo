@@ -28,9 +28,9 @@
                 },
                 {
                     "name": "Crouch",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "a1c0d6b5-37c7-4c32-bf10-0b9a4fdc4f03",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false,
@@ -38,8 +38,18 @@
                 },
                 {
                     "name": "Sprint",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "a1c0d6b5-37c7-4c32-bf10-0b9a4fdc4f04",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Clap",
+                    "type": "Button",
+                    "id": "014e0bf8-1ae3-495c-8086-60b4f2dc3753",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -133,6 +143,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Spacebar",
+                    "id": "014e0bf8-1ae3-495c-8086-60b4f2dc3754",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Clap",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

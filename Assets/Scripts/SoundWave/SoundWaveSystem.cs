@@ -54,14 +54,8 @@ namespace Echo.Gameplay
                 Instance = null;
         }
 
-        public int Emit(Vector3 origin, SoundWaveProfile profile, GameObject source = null)
+        public int Emit(in SoundWaveEmission emission)
         {
-            if (profile == null)
-            {
-                Debug.LogWarning("SoundWaveSystem.Emit ignored a null profile.", this);
-                return 0;
-            }
-
             int maxWaves = settings != null ? Mathf.Max(1, settings.MaxLogicalWaves) : 64;
             if (activeWaves.Count >= maxWaves)
             {
@@ -69,7 +63,7 @@ namespace Echo.Gameplay
                 return 0;
             }
 
-            SoundWave wave = new(nextWaveId++, origin, Time.timeAsDouble, profile, source);
+            SoundWave wave = new(nextWaveId++, emission.Origin, Time.timeAsDouble, in emission);
             activeWaves.Add(new ActiveWave { Wave = wave });
             audioService.Play(wave);
             WaveEmitted?.Invoke(wave);
@@ -97,12 +91,11 @@ namespace Echo.Gameplay
             for (int waveIndex = activeWaves.Count - 1; waveIndex >= 0; waveIndex--)
             {
                 ActiveWave activeWave = activeWaves[waveIndex];
-                SoundWaveProfile profile = activeWave.Wave.Profile;
                 float currentRadius = Mathf.Max(0f, (float)((currentTime - activeWave.Wave.StartTime) * propagationSpeed));
 
                 NotifyArrivals(activeWave, currentRadius, currentTime);
 
-                float visualLifetime = profile.MaxRadius / propagationSpeed + profile.TraceDuration;
+                float visualLifetime = activeWave.Wave.MaxRadius / propagationSpeed + activeWave.Wave.TraceDuration;
                 bool lifetimeEnded = currentTime - activeWave.Wave.StartTime >= visualLifetime &&
                                      AllListenersProcessed(activeWave);
                 if (!lifetimeEnded)
@@ -128,10 +121,9 @@ namespace Echo.Gameplay
             for (int i = 0; i < visibleCount; i++)
             {
                 SoundWave wave = activeWaves[firstWave + i].Wave;
-                SoundWaveProfile profile = wave.Profile;
                 shaderWaveOrigins[i] = new Vector4(wave.Origin.x, wave.Origin.y, wave.Origin.z, (float)wave.StartTime);
-                shaderWaveParams[i] = new Vector4(profile.MaxRadius, profile.VisualThickness,
-                    profile.TraceDuration, profile.VisualIntensity);
+                shaderWaveParams[i] = new Vector4(wave.MaxRadius, wave.VisualThickness,
+                    wave.TraceDuration, wave.VisualIntensity);
             }
 
             for (int i = visibleCount; i < MaxShaderWaves; i++)
@@ -169,11 +161,11 @@ namespace Echo.Gameplay
                 if (activeWave.LastRadius >= distance || currentRadius < distance)
                     continue;
 
-                float normalizedDistance = Mathf.Clamp01(distance / Mathf.Max(0.01f, wave.Profile.MaxRadius));
-                float falloff = wave.Profile.HearingFalloff != null
-                    ? wave.Profile.HearingFalloff.Evaluate(normalizedDistance)
+                float normalizedDistance = Mathf.Clamp01(distance / Mathf.Max(0.01f, wave.MaxRadius));
+                float falloff = wave.HearingFalloff != null
+                    ? wave.HearingFalloff.Evaluate(normalizedDistance)
                     : 1f - normalizedDistance;
-                float intensity = wave.Profile.HearingIntensity * falloff * Mathf.Max(0f, listener.ListenerSensitivity);
+                float intensity = wave.HearingIntensity * falloff * Mathf.Max(0f, listener.ListenerSensitivity);
                 double arrivalTime = wave.StartTime + distance / propagationSpeed;
 
                 activeWave.NotifiedListeners.Add(listener);

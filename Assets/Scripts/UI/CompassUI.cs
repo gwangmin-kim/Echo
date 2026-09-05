@@ -20,7 +20,7 @@ namespace Echo.UI
         [SerializeField] private float labelY = 5f;
 
         private RectTransform[] ticks;
-        private UnityEngine.UI.Image[] tickImages;
+        private Image[] tickImages;
         private TextMeshProUGUI[] cardinalLabels;
 
         private void Awake()
@@ -51,12 +51,12 @@ namespace Echo.UI
                 return;
 
             ticks = new RectTransform[36];
-            tickImages = new UnityEngine.UI.Image[ticks.Length];
+            tickImages = new Image[ticks.Length];
             for (int i = 0; i < ticks.Length; i++)
             {
                 ticks[i] = strip.Find($"Tick_{i * 10:000}") as RectTransform;
                 if (ticks[i] != null)
-                    tickImages[i] = ticks[i].GetComponent<UnityEngine.UI.Image>();
+                    tickImages[i] = ticks[i].GetComponent<Image>();
             }
 
             cardinalLabels = new TextMeshProUGUI[4];
@@ -85,7 +85,7 @@ namespace Echo.UI
                     continue;
 
                 tick.anchoredPosition = new Vector2(delta / visibleDegrees * stripWidth, tickY);
-                UnityEngine.UI.Image image = tickImages[i];
+                Image image = tickImages[i];
                 if (image != null)
                     image.rectTransform.sizeDelta = new Vector2(image.rectTransform.sizeDelta.x,
                         Mathf.Abs(Mathf.Repeat(angle, 360f)) % 30f < 0.01f ? longTickHeight : shortTickHeight);

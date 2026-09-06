@@ -32,7 +32,7 @@ namespace Echo.LevelDesign.Editor
                 result.Inner.AddRange(new[] { new Vector3(-h, 0, 0), new Vector3(-h, 0, length), new Vector3(h, 0, length), new Vector3(h, 0, 0) });
                 result.Outer.AddRange(new[] { new Vector3(-outer, 0, 0), new Vector3(-outer, 0, length), new Vector3(outer, 0, length), new Vector3(outer, 0, 0) });
                 result.OpenEdges.UnionWith(new[] { 1, 3 });
-                result.PortPositions[1] = Vector3.forward * length;
+                result.PortPositions[1] = new Vector3(0f, module.ExitElevation, length);
                 return result;
             }
             if (module.Kind == CorridorKind.EndCap) return result;

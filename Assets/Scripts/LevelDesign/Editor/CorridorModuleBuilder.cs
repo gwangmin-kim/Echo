@@ -49,7 +49,7 @@ namespace Echo.LevelDesign.Editor
                     if (module.Ceiling) ceiling.Slab(outline.Outer, outline.Center, module.Height, module.Height + module.Thickness);
                     for (int i = 0; i < outline.Inner.Count; i++)
                     {
-                        if (outline.OpenEdges.Contains(i)) continue;
+                        if (!module.Walls || outline.OpenEdges.Contains(i)) continue;
                         int j = (i + 1) % outline.Inner.Count;
                         walls.Prism(new[] { outline.Inner[i], outline.Inner[j], outline.Outer[j], outline.Outer[i] }, 0f, module.Height);
                     }
@@ -90,6 +90,16 @@ namespace Echo.LevelDesign.Editor
         private static void CreateMesh(string name, MeshData data, Transform parent, CorridorModule module)
         {
             if (data.Vertices.Count == 0) return;
+            if (module.Kind == CorridorKind.Straight)
+            {
+                float rise = module.SlopeRisePerMeter;
+                for (int i = 0; i < data.Vertices.Count; i++)
+                {
+                    var vertex = data.Vertices[i];
+                    vertex.y += vertex.z * rise;
+                    data.Vertices[i] = vertex;
+                }
+            }
             var mesh = ProBuilderMesh.Create(data.Vertices, data.Faces);
             mesh.name = name;
             mesh.transform.SetParent(parent, false);
@@ -131,6 +141,9 @@ namespace Echo.LevelDesign.Editor
         private static void Corner() => Create(CorridorKind.Corner);
         [MenuItem("GameObject/Echo/Corridors/Three Way", false, 13)]
         private static void ThreeWay() => Create(CorridorKind.ThreeWay);
+
+        [MenuItem("GameObject/Echo/Corridors/Four Way", false, 14)]
+        private static void FourWay() => Create(CorridorKind.FourWay);
 
         public static CorridorModule Create(CorridorKind kind)
         {

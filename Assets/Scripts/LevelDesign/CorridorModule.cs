@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Echo.LevelDesign
 {
-    public enum CorridorKind { Straight, EndCap, Corner, ThreeWay }
+    public enum CorridorKind { Straight, EndCap, Corner, ThreeWay, FourWay }
 
     [DisallowMultipleComponent]
     public sealed class CorridorModule : MonoBehaviour
@@ -17,6 +17,9 @@ namespace Echo.LevelDesign
         [SerializeField] private float armLength = 2f;
         [SerializeField] private float exitAYaw = 90f;
         [SerializeField] private float exitBYaw = 270f;
+        [SerializeField] private float exitCYaw;
+        [SerializeField] private float slopeAngle;
+        [SerializeField] private bool walls = true;
         [SerializeField] private bool ceiling = true;
         [SerializeField] private Material surfaceMaterial;
         [SerializeField, HideInInspector] private Transform generatedRoot;
@@ -30,6 +33,11 @@ namespace Echo.LevelDesign
         public float Thickness => thickness;
         public float ArmLength => armLength;
         public bool Ceiling => ceiling;
+        public bool Walls => walls;
+        public bool IsJunction => kind == CorridorKind.Corner || kind == CorridorKind.ThreeWay || kind == CorridorKind.FourWay;
+        public float SlopeAngle => kind == CorridorKind.Straight ? slopeAngle : 0f;
+        public float SlopeRisePerMeter => (float)Math.Tan(SlopeAngle * Math.PI / 180.0);
+        public float ExitElevation => kind == CorridorKind.Straight ? length * SlopeRisePerMeter : 0f;
         public Material SurfaceMaterial => surfaceMaterial;
         public Transform GeneratedRoot => generatedRoot;
         public bool NeedsRebuild => generatedRoot == null || builtSettings != SettingsKey || builtMaterial != surfaceMaterial;
@@ -37,17 +45,25 @@ namespace Echo.LevelDesign
             height.ToString("R", System.Globalization.CultureInfo.InvariantCulture), length.ToString("R", System.Globalization.CultureInfo.InvariantCulture),
             thickness.ToString("R", System.Globalization.CultureInfo.InvariantCulture), armLength.ToString("R", System.Globalization.CultureInfo.InvariantCulture),
             exitAYaw.ToString("R", System.Globalization.CultureInfo.InvariantCulture), exitBYaw.ToString("R", System.Globalization.CultureInfo.InvariantCulture),
-            ceiling);
+            ceiling) + ExtensionSettingsKey;
+
+        // Keep the original key for unchanged legacy modules; new defaults do not invalidate their geometry.
+        private string ExtensionSettingsKey =>
+            (kind == CorridorKind.FourWay ? "|port3=" + exitCYaw.ToString("R", System.Globalization.CultureInfo.InvariantCulture) : "") +
+            (kind == CorridorKind.Straight && slopeAngle != 0f ? "|slope=" + slopeAngle.ToString("R", System.Globalization.CultureInfo.InvariantCulture) : "") +
+            (kind != CorridorKind.EndCap && !walls ? "|walls=False" : "");
 
         public float[] GetPortYaws()
         {
-            switch (kind)
+            return kind switch
             {
-                case CorridorKind.Straight: return new[] { 180f, 0f };
-                case CorridorKind.EndCap: return new[] { 180f };
-                case CorridorKind.Corner: return new[] { 180f, Mathf.Repeat(exitAYaw, 360f) };
-                default: return new[] { 180f, Mathf.Repeat(exitAYaw, 360f), Mathf.Repeat(exitBYaw, 360f) };
-            }
+                CorridorKind.Straight => new[] { 180f, 0f },
+                CorridorKind.EndCap => new[] { 180f },
+                CorridorKind.Corner => new[] { 180f, Mathf.Repeat(exitAYaw, 360f) },
+                CorridorKind.ThreeWay => new[] { 180f, Mathf.Repeat(exitAYaw, 360f), Mathf.Repeat(exitBYaw, 360f) },
+                CorridorKind.FourWay => new[] { 180f, Mathf.Repeat(exitAYaw, 360f), Mathf.Repeat(exitBYaw, 360f), Mathf.Repeat(exitCYaw, 360f) },
+                _ => Array.Empty<float>(),
+            };
         }
 
         public bool TryValidate(out string error)
@@ -55,11 +71,14 @@ namespace Echo.LevelDesign
             if (!Enum.IsDefined(typeof(CorridorKind), kind)) { error = "Unknown module type."; return false; }
             if (!Positive(width) || !Positive(height) || !Positive(thickness) ||
                 (kind == CorridorKind.Straight && !Positive(length)) ||
-                ((kind == CorridorKind.Corner || kind == CorridorKind.ThreeWay) && !Positive(armLength)))
+                (IsJunction && !Positive(armLength)))
             { error = "Dimensions must be finite and at least 0.05 m."; return false; }
-            if (kind == CorridorKind.Corner || kind == CorridorKind.ThreeWay)
+            if (kind == CorridorKind.Straight && (!Finite(slopeAngle) || Mathf.Abs(slopeAngle) >= 90f || !Finite(ExitElevation)))
+            { error = "Slope must be finite, greater than -90 and less than 90 degrees, with a finite exit elevation."; return false; }
+            if (IsJunction)
             {
-                if (!Finite(exitAYaw) || (kind == CorridorKind.ThreeWay && !Finite(exitBYaw)))
+                if (!Finite(exitAYaw) || (kind != CorridorKind.Corner && !Finite(exitBYaw)) ||
+                    (kind == CorridorKind.FourWay && !Finite(exitCYaw)))
                 { error = "Angles must be finite."; return false; }
                 var yaws = GetPortYaws();
                 for (int i = 0; i < yaws.Length; i++)

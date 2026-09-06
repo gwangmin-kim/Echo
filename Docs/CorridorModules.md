@@ -2,9 +2,9 @@
 
 ## 시작
 
-- 생성 메뉴: **GameObject > Echo > Corridors > Straight / End Cap / Corner / Three Way**.
-- 프리셋: `Assets/Prefabs/LevelDesign/Corridors/`의 네 프리팹.
-- 샘플: `Assets/Scenes/CorridorModules.unity`. 네 프리셋을 나란히 배치한 구조 확인용 씬이며 플레이어와 조명은 포함하지 않는다.
+- 생성 메뉴: **GameObject > Echo > Corridors > Straight / End Cap / Corner / Three Way / Four Way**.
+- 프리셋: `Assets/Prefabs/LevelDesign/Corridors/`의 기본 다섯 종류와 `CorridorRamp`(+20° Straight) 프리팹.
+- 샘플: `Assets/Scenes/CorridorModules.unity`. 기본 모듈과 상승·하강 경사 및 수평 연결 예시를 배치한 구조 확인용 씬이며 플레이어와 조명은 포함하지 않는다.
 - 메뉴로 만든 모듈은 바로 수정할 수 있다. 프리팹 인스턴스 하나만 수정하려면 루트 Inspector에서 **Unpack Module for Independent Editing**을 먼저 누른다. 모든 인스턴스에 공통 변경을 적용하려면 원본을 Prefab Mode에서 편집한다.
 - 수치를 바꾸고 **Rebuild Geometry**를 누른 뒤 씬 또는 프리팹을 저장한다. 입력값이 잘못되면 이유를 표시하고 생성을 차단한다. 기존 형상은 유지된다.
 
@@ -47,6 +47,13 @@
 
 전체 방향은 루트 Transform의 Y 회전으로 조절한다.
 
+## 사거리·경사·벽 옵션
+
+- **FourWay**: Port 0은 180° 고정이고 Port 1~3 Yaw를 조정한다. 네 출입구의 모든 여섯 쌍에 최소 60°를 적용한다. 기본값 90°/270°/0°는 십자형이다.
+- **Slope Angle**: Straight 전용. 양수는 상승, 음수는 하강, 0°는 평지다. −90° < 각도 < +90°인 유한한 값만 허용한다. `Horizontal Length`는 수평 길이이며 출구 높이는 `Length × tan(각도)`다. 입출구는 수직 단면을 유지하며 내부 높이·바닥/천장 두께는 수직 기준이다. Inspector에 출구 높이를 표시한다. 다른 종류에서는 경사 값을 무시한다.
+- **Include Walls**: 양쪽/분기 측면 벽을 일괄 생성하거나 제거한다. 천장과 독립적이며 벽을 끄면 충돌체도 제거한다. 바닥 윤곽과 출입구는 바뀌지 않는다. EndCap의 막는 면은 유지하고 이 옵션은 숨긴다.
+- 기존 프리팹은 경사 0°·벽 켜짐으로 유지되며 기본값만 추가됐다는 이유로 재생성을 요구하지 않는다.
+
 ## 연결
 
 1. 두 모듈의 형상을 먼저 갱신한다.
@@ -82,3 +89,5 @@ unity command eval_file Tests/CorridorModules.eval.cs --format json
 플레이어로 직접 통과하는 체감, 음파 가시성, 완성된 맵의 동선은 별도 플레이 검증 대상이다.
 
 검증 중 Console에 URP `BloomEditor.OnEnable` / `TonemappingEditor.OnEnable`의 `SerializedObjectNotCreatableException`이 각 1건 기록됐다. 복도 모듈 스택의 오류는 아니며, 해당 URP Inspector 예외의 원인은 이번 범위에서 확정하지 않았다. 따라서 Console 전체가 오류 없이 통과했다고 간주하지 않는다.
+
+확장 회귀 검사: `unity command eval_file Tests/CorridorExtensions.eval.cs --format json`. 기존 검사 125개와 확장 검사 95개(총 Raycast 6,748회)를 통과했다. 확장 검사에는 사거리 여섯 쌍 제약, 상승/하강의 면 방향·수직 단면·내부 높이, 벽/천장의 네 조합, 경사 출구와 수평 복도 연결, 소품 보존, Undo/Redo를 포함한다. 확장 샘플의 8개 모듈·21개 메시와 충돌체는 저장 후 재로딩 및 Play Mode 로드에서 확인했다.

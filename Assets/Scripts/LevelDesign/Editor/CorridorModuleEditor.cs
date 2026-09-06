@@ -19,10 +19,15 @@ namespace Echo.LevelDesign.Editor
             Add(fields, "width", "Interior Width (m)");
             Add(fields, "height", "Interior Height (m)");
             Add(fields, "thickness", "Wall / Slab Thickness (m)");
-            var length = Add(fields, "length", "Straight Length (m)");
+            var length = Add(fields, "length", "Horizontal Length (m)");
+            var slope = Add(fields, "slopeAngle", "Slope Angle (degrees)");
+            var elevation = new HelpBox("", HelpBoxMessageType.Info);
+            fields.Add(elevation);
             var arm = Add(fields, "armLength", "Arm Beyond Joint (m)");
             var yawA = Add(fields, "exitAYaw", "Port 1 Yaw (degrees)");
             var yawB = Add(fields, "exitBYaw", "Port 2 Yaw (degrees)");
+            var yawC = Add(fields, "exitCYaw", "Port 3 Yaw (degrees)");
+            var walls = Add(fields, "walls", "Include Walls");
             Add(fields, "ceiling", "Include Ceiling");
             Add(fields, "surfaceMaterial", "Surface Material");
             var status = new HelpBox();
@@ -43,10 +48,13 @@ namespace Echo.LevelDesign.Editor
             void Refresh()
             {
                 if (module == null) return;
-                bool junction = module.Kind == CorridorKind.Corner || module.Kind == CorridorKind.ThreeWay;
-                length.style.display = module.Kind == CorridorKind.Straight ? DisplayStyle.Flex : DisplayStyle.None;
+                bool junction = module.IsJunction;
+                length.style.display = slope.style.display = elevation.style.display = module.Kind == CorridorKind.Straight ? DisplayStyle.Flex : DisplayStyle.None;
+                elevation.text = $"Exit elevation: {module.ExitElevation:0.###} m. Positive slope rises toward Port 1. Opening height and slab thickness stay vertical; both ports remain upright.";
+                walls.style.display = module.Kind == CorridorKind.EndCap ? DisplayStyle.None : DisplayStyle.Flex;
                 arm.style.display = yawA.style.display = junction ? DisplayStyle.Flex : DisplayStyle.None;
-                yawB.style.display = module.Kind == CorridorKind.ThreeWay ? DisplayStyle.Flex : DisplayStyle.None;
+                yawB.style.display = module.Kind == CorridorKind.ThreeWay || module.Kind == CorridorKind.FourWay ? DisplayStyle.Flex : DisplayStyle.None;
+                yawC.style.display = module.Kind == CorridorKind.FourWay ? DisplayStyle.Flex : DisplayStyle.None;
                 bool valid = module.TryValidate(out string error);
                 bool editable = CorridorModuleBuilder.CanEdit(module, out string editError);
                 rebuild.SetEnabled(valid && editable);

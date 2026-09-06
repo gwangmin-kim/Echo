@@ -14,7 +14,7 @@ try
     {
         var m = Echo.LevelDesign.Editor.CorridorModuleBuilder.Create(kind);
         Assert(!m.NeedsRebuild, "fresh module marked stale");
-        Assert(m.GetComponentsInChildren<Echo.LevelDesign.CorridorPort>().Length == (kind == Echo.LevelDesign.CorridorKind.EndCap ? 1 : kind == Echo.LevelDesign.CorridorKind.ThreeWay ? 3 : 2), "port count");
+        Assert(m.GetComponentsInChildren<Echo.LevelDesign.CorridorPort>().Length == (kind == Echo.LevelDesign.CorridorKind.EndCap ? 1 : kind == Echo.LevelDesign.CorridorKind.ThreeWay ? 3 : kind == Echo.LevelDesign.CorridorKind.FourWay ? 4 : 2), "port count");
         var detail = new GameObject("Preserve me"); detail.transform.SetParent(m.transform.Find("Details"), false);
         Set(m, "width", 4);
         Assert(m.NeedsRebuild, "changed settings not detected");

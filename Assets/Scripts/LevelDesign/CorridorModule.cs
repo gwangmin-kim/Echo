@@ -8,7 +8,10 @@ namespace Echo.LevelDesign
     [DisallowMultipleComponent]
     public sealed class CorridorModule : MonoBehaviour
     {
-        public const float MinimumAngle = 60f;
+        public const float CornerMinimumAngle = 60f;
+        public const float BranchMinimumAngle = 30f;
+        public float MinimumAngle => kind == CorridorKind.ThreeWay || kind == CorridorKind.FourWay
+            ? BranchMinimumAngle : CornerMinimumAngle;
         [SerializeField] private CorridorKind kind;
         [SerializeField] private float width = 3f;
         [SerializeField] private float height = 3f;
@@ -86,7 +89,7 @@ namespace Echo.LevelDesign
                     {
                         float angle = Mathf.Abs(Mathf.DeltaAngle(yaws[i], yaws[j]));
                         if (angle < MinimumAngle)
-                        { error = $"Port {i} / Port {j}: {angle:0.###} degrees. Every pair must be at least 60 degrees."; return false; }
+                        { error = $"Port {i} / Port {j}: {angle:0.###} degrees. Every pair must be at least {MinimumAngle:0} degrees."; return false; }
                     }
             }
             error = null;

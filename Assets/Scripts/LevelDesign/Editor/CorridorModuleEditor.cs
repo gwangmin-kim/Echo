@@ -12,7 +12,7 @@ namespace Echo.LevelDesign.Editor
         {
             var root = new VisualElement();
             var module = (CorridorModule)target;
-            root.Add(new HelpBox("Dimensions are clear interior metres. Port 0 faces local -Z. Other yaws are clockwise from +Z. Every pair must be at least 60°. Place props under Details; rebuilding replaces Generated.", HelpBoxMessageType.Info));
+            root.Add(new HelpBox("Dimensions are clear interior metres. Port 0 faces local -Z. Other yaws are clockwise from +Z. Minimum port separation: Corner 60°; Three Way / Four Way 30°. Place props under Details; rebuilding replaces Generated.", HelpBoxMessageType.Info));
             var fields = new VisualElement();
             root.Add(fields);
             Add(fields, "kind", "Module Type");

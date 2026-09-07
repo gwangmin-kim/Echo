@@ -37,9 +37,9 @@ try
     }
     UnityEngine.Object.DestroyImmediate(corner.gameObject);
     var junction = Echo.LevelDesign.Editor.CorridorModuleBuilder.Create(Echo.LevelDesign.CorridorKind.ThreeWay);
-    foreach (var pair in new[] { new[] { 120f, 240f }, new[] { 0f, 60f }, new[] { 0f, 300f }, new[] { 90f, 270f }, new[] { -120f, 480f } })
+    foreach (var pair in new[] { new[] { 150f, 210f }, new[] { 0f, 30f }, new[] { 0f, 330f }, new[] { 90f, 270f }, new[] { -120f, 480f } })
     { Set(junction, "exitAYaw", pair[0]); Set(junction, "exitBYaw", pair[1]); Assert(junction.TryValidate(out _), "valid junction rejected"); cases++; }
-    foreach (var pair in new[] { new[] { 0f, 359f }, new[] { 0f, 59.999f }, new[] { 0f, 300.001f }, new[] { 120.001f, 270f }, new[] { 90f, 239.999f }, new[] { 90f, 90f } })
+    foreach (var pair in new[] { new[] { 0f, 359f }, new[] { 0f, 29.999f }, new[] { 0f, 330.001f }, new[] { 150.001f, 270f }, new[] { 90f, 209.999f }, new[] { 90f, 90f } })
     { Set(junction, "exitAYaw", pair[0]); Set(junction, "exitBYaw", pair[1]); Assert(!junction.TryValidate(out _), "invalid junction accepted"); cases++; }
     UnityEngine.Object.DestroyImmediate(junction.gameObject);
 

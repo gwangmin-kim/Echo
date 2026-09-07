@@ -21,10 +21,10 @@ void Meshes(Echo.LevelDesign.CorridorModule m)
 try
 {
     var four=Echo.LevelDesign.Editor.CorridorModuleBuilder.Create(Echo.LevelDesign.CorridorKind.FourWay);
-    foreach(var angles in new[]{new[]{90f,270f,0f},new[]{60f,240f,0f},new[]{-60f,420f,0f},new[]{120f,240f,0f}})
-    {Set(four,"exitAYaw",angles[0]);Set(four,"exitBYaw",angles[1]);Set(four,"exitCYaw",angles[2]);Assert(four.TryValidate(out _),"60 boundary rejected");cases++;}
+    foreach(var angles in new[]{new[]{90f,270f,0f},new[]{60f,240f,0f},new[]{-60f,420f,0f},new[]{150f,210f,0f},new[]{0f,30f,60f},new[]{0f,90f,330f}})
+    {Set(four,"exitAYaw",angles[0]);Set(four,"exitBYaw",angles[1]);Set(four,"exitCYaw",angles[2]);Assert(four.TryValidate(out _),"valid branch angle rejected");cases++;}
     // Cover every pair: 0/1, 0/2, 0/3, 1/2, 1/3, 2/3, and wrap-around.
-    foreach(var angles in new[]{new[]{150f,270f,0f},new[]{90f,210f,0f},new[]{90f,270f,150f},new[]{90f,100f,0f},new[]{90f,270f,100f},new[]{90f,270f,280f},new[]{0f,90f,359f},new[]{120.001f,240f,0f},new[]{90f,270f,float.NaN}})
+    foreach(var angles in new[]{new[]{150.001f,270f,0f},new[]{90f,209.999f,0f},new[]{90f,270f,150.001f},new[]{90f,100f,0f},new[]{90f,270f,100f},new[]{90f,270f,280f},new[]{0f,90f,359f},new[]{0f,29.999f,90f},new[]{90f,270f,float.NaN}})
     {
         Set(four,"exitAYaw",angles[0]);Set(four,"exitBYaw",angles[1]);Set(four,"exitCYaw",angles[2]);Assert(!four.TryValidate(out _),"invalid fourway accepted");
         var before=four.GeneratedRoot;bool rejected=false;try{Echo.LevelDesign.Editor.CorridorModuleBuilder.Rebuild(four);}catch(InvalidOperationException){rejected=true;}

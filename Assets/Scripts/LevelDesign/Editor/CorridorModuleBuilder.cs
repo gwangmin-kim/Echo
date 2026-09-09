@@ -112,13 +112,26 @@ namespace Echo.LevelDesign.Editor
             mesh.gameObject.AddComponent<Echo.Gameplay.SoundReactiveSurface>();
         }
 
+        private static Component Owner(CorridorPort port)
+        {
+            foreach (var parent in port.GetComponentsInParent<Transform>())
+            {
+                if (parent.TryGetComponent<CorridorModule>(out var corridor)) return corridor;
+                if (parent.TryGetComponent<RoomModule>(out var room)) return room;
+            }
+            return null;
+        }
+
+        private static bool NeedsRebuild(Component owner) => owner is CorridorModule corridor
+            ? corridor.NeedsRebuild : ((RoomModule)owner).NeedsRebuild;
+
         public static void Snap(CorridorPort moving, CorridorPort destination)
         {
             if (moving == null || destination == null) throw new ArgumentException("Choose both ports.");
-            var module = moving.GetComponentInParent<CorridorModule>();
-            var other = destination.GetComponentInParent<CorridorModule>();
+            var module = Owner(moving);
+            var other = Owner(destination);
             if (module == null || other == null || module == other) throw new ArgumentException("Ports must belong to different modules.");
-            if (module.NeedsRebuild || other.NeedsRebuild) throw new InvalidOperationException("Rebuild both modules before connecting.");
+            if (NeedsRebuild(module) || NeedsRebuild(other)) throw new InvalidOperationException("Rebuild both modules before connecting.");
             if (Application.isPlaying || EditorUtility.IsPersistent(module) || EditorUtility.IsPersistent(other))
                 throw new InvalidOperationException("Connect scene instances outside Play Mode.");
             if (module.gameObject.scene != other.gameObject.scene) throw new InvalidOperationException("Ports must be in the same scene.");
